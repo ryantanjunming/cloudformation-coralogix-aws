@@ -32,7 +32,8 @@ jobs:
 
           for changed_file in "${changed_files_array[@]}"; do
             integration=$(echo "$changed_file" | xargs -n1 dirname | xargs -n1 basename)
-            echo "integration value: $integration"
+            echo "changed_file: $changed_file, integration value: $integration"
+
             if [[ $changed_file == **"/$integration/template.yaml" ]]; then
               if echo "$integration_list" | grep -q "$integration"; then
                 mv $changed_file template-directory/${integration}-template.yaml
@@ -149,7 +150,7 @@ jobs:
           if [[ -n "$pr_exists" ]]; then
             echo "Pull request already exists: #$pr_exists"
           else
-            gh pr create --base master --head "${branch_name}" --title "${Pr_name}" --body "This pull request syncs the changes from the cloudformation repo to this repo."
+            # gh pr create --base master --head "${branch_name}" --title "${Pr_name}" --body "This pull request syncs the changes from the cloudformation repo to this repo."
           fi
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
