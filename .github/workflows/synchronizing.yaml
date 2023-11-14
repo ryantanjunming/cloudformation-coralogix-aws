@@ -32,6 +32,7 @@ jobs:
 
           for changed_file in "${changed_files_array[@]}"; do
             integration=$(echo "$changed_file" | xargs -n1 dirname | xargs -n1 basename)
+            echo "integration value: $integration"
             if [[ $changed_file == **"/$integration/template.yaml" ]]; then
               if echo "$integration_list" | grep -q "$integration"; then
                 mv $changed_file template-directory/${integration}-template.yaml
