@@ -33,15 +33,16 @@ jobs:
           for changed_file in "${changed_files_array[@]}"; do
             integration=$(echo "$changed_file" | xargs -n1 dirname | xargs -n1 basename)
             integration_folder=$(echo "$changed_file" | xargs -n1 dirname)
-            echo "changed_file: $changed_file, integration value: $integration"
+            echo "changed_file: $changed_file, integration value: $integration, integration_folder: $integration_folder"
 
             if [[ $changed_file == **"/$integration/template.yaml" ]]; then
               if echo "$integration_list" | grep -q "$integration"; then
 
                 if [ -f $integration_folder/variation-config.txt ]; then
                   IFS=$'\n' read -d '' -r -a folder_array < "$integration_folder/variation-config.txt"
-                  echo ${folder_array[0]}
-                  echo ${folder_array[1]}
+                  for string in "${folder_array[@]}"; do
+                    echo "$string"
+                  done
                 fi
                 mv $changed_file template-directory/${integration}-template.yaml
                 echo $integration >> changed-integration.txt
