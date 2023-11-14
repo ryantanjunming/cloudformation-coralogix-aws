@@ -39,8 +39,7 @@ jobs:
               if echo "$integration_list" | grep -q "$integration"; then
 
                 if [ -f $integration_folder/variation-config.txt ]; then
-                  echo "file exists"
-                  IFS=$'\n' read -d '' -r -a folder_array < "${integration_folder}/variation-config.txt"
+                  IFS=$'\n' read -d '' -r -a folder_array < $integration_folder/variation-config.txt
                   for string in "${folder_array[@]}"; do
                     echo "$string"
                   done
