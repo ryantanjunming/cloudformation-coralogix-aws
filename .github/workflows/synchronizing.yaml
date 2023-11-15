@@ -7,7 +7,7 @@ on:
       - "**/template.yaml"
 jobs:
   upload_files:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     name: upload files
     env:
       integration_list: "s3,s3-sns,cloudtrail,cloudtrail-sns,cloudwatch-logs,vpc-flow-logs,firehose-logs,firehose-metrics,resource-metadata"
@@ -32,10 +32,24 @@ jobs:
 
           for changed_file in "${changed_files_array[@]}"; do
             integration=$(echo "$changed_file" | xargs -n1 dirname | xargs -n1 basename)
+            integration_folder=$(echo "$changed_file" | xargs -n1 dirname)
+            echo "changed_file: $changed_file, integration value: $integration, integration_folder: $integration_folder"
+
             if [[ $changed_file == **"/$integration/template.yaml" ]]; then
               if echo "$integration_list" | grep -q "$integration"; then
-                mv $changed_file template-directory/${integration}-template.yaml
-                echo $integration >> changed-integration.txt
+
+                # Check if the integration has folder variations via folder-variation.txt
+                if [ -f $integration_folder/folder-variation.txt ]; then
+                  folder_array=($(cat "${integration_folder}/folder-variation.txt"))
+                  for integration_variation in "${folder_array[@]}"; do
+                    mv $changed_file template-directory/${integration_variation}-template.yaml
+                    echo $integration_variation >> changed-integration.txt
+                  done
+                else
+                  mv $changed_file template-directory/${integration}-template.yaml
+                  echo $integration >> changed-integration.txt
+                fi
+                
               fi
             fi
           done
@@ -63,7 +77,7 @@ jobs:
           path: scripts/replace_template.sh
 
   create_pr:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     needs: upload_files
     steps:
 

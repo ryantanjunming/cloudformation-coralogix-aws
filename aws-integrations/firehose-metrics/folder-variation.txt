@@ -1,0 +1,5 @@
+firehose-logs
+firehose-fargate-logs
+firehose-cloudwatch-logs
+firehose-cloudtrail-logs
+firehose-waf-logs
